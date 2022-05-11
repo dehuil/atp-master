@@ -1,0 +1,73 @@
+{% extends 'account/base.html' %}
+{% load static %}
+{% block title %}注册{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/account/login.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content_index">
+        <div class="input_group">
+            <h3 style="text-align: center">用户注册</h3>
+            <form id="user_input" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="Username">用户名</label>
+                    <input name="username" type="text" class="form-control" id="Username" placeholder="用户名"
+                           required="required">
+                    <span id='username_error' style="color: red"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Password">密码</label>
+                    <input name="password" type="password" class="form-control" id="Password" placeholder="密码"
+                           required="required">
+                </div>
+
+                <div class="btn_">
+                    <button id='btnReg' type="button" class="btn btn-primary">注 册</button>
+                    <a href="{% url 'atp:login' %}">登 录</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        toastr.options = {
+            closeButton: true,
+            timeOut: "1000",
+            positionClass: "toast-center-center",
+        };
+
+        $(function () {
+            btnReg();
+        });
+
+        function btnReg() {
+            $('#btnReg').click(function () {
+                $('#username_error').empty();
+                $.ajax({
+                    url: "{% url 'atp:register' %}",
+                    type: "POST",
+                    data: $("#user_input").serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success('注册成功!');
+                            setTimeout(function () {
+                                location.href = "{% url 'atp:login' %}"
+                            }, 1000);
+                        } else if (res.code === 201) {
+                            $('#username_error').text('用户名已存在!')
+                        } else if (res.code === 202) {
+                            $('#username_error').text('用户名或密码不能为空!')
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'manage/base_manage.html' %}
+{% load static %}
+{% block title %}编辑产品{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/product/product_update.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div id="product_content">
+            <h3 id="add_product_name">编辑产品</h3>
+            <div id="product_name">
+                <form id="product_input" method="post" action="{% url 'atp:product_update' pro_obj.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_name_input">产品名称：</label>
+                        <br><br>
+                        <input name="product_name" type="text" class="form-control" id="p_name_input"
+                               placeholder="输入产品名称" value="{{ pro_obj.product_name }}" required="required">
+                        <p id="msg_product_name" style="color: red"></p>
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_des_input">产品描述：</label>
+                        <br><br>
+                        <input name="product_desc" type="text" class="form-control" id="p_des_input"
+                               placeholder="输入产品描述" value="{{ pro_obj.product_desc }}" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">产品负责人：</label>
+                        <br><br>
+                        <input name="product_er" type="text" class="form-control" id="p_er_input"
+                               placeholder="输入产品负责人" value="{{ pro_obj.product_er }}" required="required">
+                    </div>
+                    <button id="btnSubmit" type="button" class="btn">保存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        toastr.options = {
+            closeButton: true,
+            timeOut: "1000",
+            positionClass: "toast-center-center",
+        };
+
+        $(function () {
+            btnSubmit();
+        });
+
+        function btnSubmit() {
+            $("#btnSubmit").click(function () {
+                $.ajax({
+                    url: "{% url 'atp:product_update' pro_obj.id %}",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: $("#product_input").serialize(),
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success("修改成功");
+                            setTimeout(function () {
+                                location.href = "{% url 'atp:product_manage' %}"
+                            }, 1000)
+                        } else if (res.code === 201) {
+                            toastr.success("修改失败");
+                            setTimeout(function () {
+                                location.href = "{% url 'atp:product_manage' %}"
+                            }, 1000)
+                        } else if (res.code === 202) {
+                            $('#msg_product_name').text("产品名称不能为空")
+                        } else if (res.code === 203) {
+                            $('#msg_product_name').text("产品已存在")
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}

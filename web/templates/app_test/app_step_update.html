@@ -1,0 +1,124 @@
+{% extends 'manage/base_manage.html' %}
+{% load static %}
+{% block title %}App测试用例步骤编辑{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/app_test/app_step_update.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div id="test_content_apis">
+            <h3 id="add_test_name">编辑App用例步骤</h3>
+            <div id="title_apis">
+                <form id="app_s_input" method="post" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_name_input">所属用例：</label>
+                        <br><br>
+                        <select class="form-control" name="dropdown">
+                            {% for app_test in app_tests %}
+                                {% if app_test.id == app_t_id %}
+                                    <option value="{{ app_test.pk }}">
+                                        {{ app_test.app_t_name }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_des_input">测试步骤：</label>
+                        <br><br>
+                        <input name="app_step" type="text" class="form-control" id="p_des_input"
+                               placeholder="输入测试步骤" value="{{ app_step.app_step }}">
+                        <p id="msg_app_s_name" style="color: red"></p>
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_des_input">定位方式：</label>
+                        <br><br>
+                        <input name="app_find_method" type="text" class="form-control" id="p_des_input"
+                               placeholder="输入定位方式" value="{{ app_step.app_find_method }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">控件元素：</label>
+                        <br><br>
+                        <input name="app_element" type="text" class="form-control" id="p_er_input" placeholder="输入控件元素"
+                               value="{{ app_step.app_element }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">操作方法：</label>
+                        <br><br>
+                        <input name="app_opt_method" type="text" class="form-control" id="p_er_input"
+                               placeholder="输入操作方法" value="{{ app_step.app_opt_method }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">测试数据：</label>
+                        <br><br>
+                        <input name="app_test_data" type="text" class="form-control" id="p_er_input"
+                               placeholder="输入测试数据" value="{{ app_step.app_test_data }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">验证数据：</label>
+                        <br><br>
+                        <input name="app_assert_data" type="text" class="form-control" id="p_er_input"
+                               placeholder="输入验证数据" value="{{ app_step.app_assert_data }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">测试结果：</label>
+                        <br><br>
+                        <select class="form-control" name="app_result">
+                            {% if app_step.app_result == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% elif app_step.app_result == 0 %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <button id="btnSubmit" type="button" class="btn">保存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        toastr.options = {
+            closeButton: true,
+            timeOut: "1000",
+            positionClass: "toast-center-center",
+        };
+
+        $(function () {
+            btnSubmit();
+        });
+
+        function btnSubmit() {
+            $("#btnSubmit").click(function () {
+                $.ajax({
+                    url: "{% url 'atp:app_step_update' app_t_id app_s_id  %}",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: $("#app_s_input").serialize(),
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success("修改成功");
+                            setTimeout(function () {
+                                location.href = "{% url 'atp:app_step_manage' app_t_id %}"
+                            }, 1000)
+                        } else if (res.code === 201) {
+                            toastr.success("修改失败");
+                            setTimeout(function () {
+                                location.href = "{% url 'atp:app_step_manage' app_t_id %}"
+                            }, 1000)
+                        } else if (res.code === 202) {
+                            $("#msg_app_s_name").text("测试步骤内容不能为空")
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}

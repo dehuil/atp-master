@@ -1,0 +1,33 @@
+.content_index {
+    border: outset;
+    background-color: white;
+    margin: 0 auto;
+    margin-top: 200px;
+    width: 500px;
+    height: 300px;
+}
+
+.input_group {
+    margin: 0 auto;
+    width: 200px;
+    height: 300px;
+}
+
+.btn_ {
+    text-align: center;
+    width: 200px;
+}
+
+
+.btn_ button {
+    position: relative;
+    left: 15px;
+    width: 100px;
+}
+
+.btn_ a {
+    position: relative;
+    left: 20px;
+    top: 10px;
+}
+

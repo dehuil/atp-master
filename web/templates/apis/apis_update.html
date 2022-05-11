@@ -1,0 +1,152 @@
+{% extends 'manage/base_manage.html' %}
+{% load static %}
+{% block title %}编辑单一接口用例{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/apis/apis_update.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div id="test_content_apis">
+            <h3 id="add_test_name">编辑接口用例</h3>
+            <div id="title_apis">
+                <form id="apis_input" method="post" action="">
+                    {% csrf_token %}
+
+                    <div>
+                        <label class=apis_update_product_name_distance for="p_name_input">产品：</label>
+                        <br><br>
+                        <select class="apis_update_product_input_distance" name="dropdown">
+                            {% for pro_name in pro_names %}
+                                {% if pro_name.id == apis.api_product_id %}
+                                    <option value="{{ pro_name.id }}" selected>
+                                        {{ pro_name.product_name }}
+                                    </option>
+                                {% else %}
+                                    <option value="{{ pro_name.pk }}">
+                                        {{ pro_name.product_name }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="apis_update_test_name_distance" for="p_des_input">接口用例名称：</label>
+                        <br><br>
+                        <input name="api_name" type="text" class="apis_update_test_input_distance" id="p_des_input"
+                               placeholder="输入接口用例名称" value="{{ apis.api_name }}">
+                        <p class="apis_update_test_msg_name_distance" id="msg_apis_name" style="color: red"></p>
+                    </div>
+
+                    <div>
+                        <label class='apis_update_url_name_distance' for="p_er_input">Url地址：</label>
+                        <br><br>
+                        <input name="api_url" type="text" class="apis_update_url_input_distance" id="p_er_input"
+                               placeholder="输入Url地址"
+                               value="{{ apis.api_url }}">
+                    </div>
+
+                    <div>
+                        <label class="apis_update_para_name_distance" for="p_er_input">请求参数和值：</label>
+                        <br><br>
+                        <textarea name="api_param_value" class="apis_update_para_input_distance" id="p_er_input"
+                                  placeholder="输入请求参数和值">
+                            {{ apis.api_param_value }}
+                        </textarea>
+                    </div>
+
+                    <div>
+                        <label class='apis_update_method_name_distance' for="p_er_input">请求方法：</label>
+                        <br><br>
+                        <select class="apis_update_method_input_distance" name="method_check">
+                            {% if apis.api_method == "get" %}
+                                <option value="get" selected>get</option>
+                                <option value="post">post</option>
+                                <option value="put">put</option>
+                                <option value="delete">delete</option>
+                            {% elif apis.api_method == "post" %}
+                                <option value="get">get</option>
+                                <option value="post" selected>post</option>
+                                <option value="put">put</option>
+                                <option value="delete">delete</option>
+                            {% elif apis.api_method == "put" %}
+                                <option value="get">get</option>
+                                <option value="post">post</option>
+                                <option value="put" selected>put</option>
+                                <option value="delete">delete</option>
+                            {% elif apis.api_method == "delete" %}
+                                <option value="get">get</option>
+                                <option value="post">post</option>
+                                <option value="put">put</option>
+                                <option value="delete" selected>delete</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class='apis_update_expect_name_distance' for="p_er_input">预期结果：</label>
+                        <br><br>
+                        <input name="api_result" type="text" class="apis_update_expect_input_distance"
+                               placeholder="输入预期结果"
+                               value="{{ apis.api_result }}">
+                    </div>
+
+                    <div>
+                        <label class='apis_update_result_name_distance' for="p_er_input">测试结果：</label>
+                        <br><br>
+                        <select class="apis_update_result_input_distance" name="api_status">
+                            {% if apis.api_status == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% elif apis.api_status == 0 %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <button id="btnSubmit" type="button" class="btn">保存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        toastr.options = {
+            closeButton: true,
+            timeOut: "1000",
+            positionClass: "toast-center-center",
+        };
+
+        $(function () {
+            btnSubmit();
+        });
+
+        // 点击提交数据
+        function btnSubmit() {
+            $('#btnSubmit').click(function () {
+                $.ajax({
+                    url: "{% url 'atp:apis_update' apis.id %}",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: $('#apis_input').serialize(),
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success("修改成功");
+                            setTimeout(1000)
+                        } else if (res.code === 201) {
+                            toastr.success("修改失败");
+                            location.href = "{% url 'atp:apis_manage' %}"
+                        } else if (res.code === 202) {
+                            $('#msg_apis_name').text("接口用例名称不能为空")
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}

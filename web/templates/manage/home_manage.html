@@ -1,0 +1,17 @@
+{% extends 'manage/base_manage.html' %}
+{% load static %}
+
+{% block title %}首页{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/manage/home_manage.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="content_product">
+            <h4 style="text-align: center">产品统计</h4>
+            <a class="pro_text" href="{% url 'atp:product_manage' %}">产品数量：{{ pro_count }}</a>
+        </div>
+    </div>
+{% endblock %}

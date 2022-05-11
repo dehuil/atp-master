@@ -1,0 +1,126 @@
+{% extends 'manage/base_manage.html' %}
+{% load static %}
+{% block title %}流程接口用例编辑{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/api_test/api_step_update.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div id="test_content_apis">
+            <h3 id="add_test_name">编辑接口用例步骤</h3>
+            <div id="title_apis">
+                <form id="api_s_input" method="post" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_name_input">所属用例：</label>
+                        <br><br>
+                        <select class="form-control" name="dropdown">
+                            {% for api_test in api_tests %}
+                                {% if api_test.id == api_t_id %}
+                                    <option value="{{ api_test.pk }}">
+                                        {{ api_test.api_t_name }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_des_input">测试步骤：</label>
+                        <br><br>
+                        <input name="api_step" type="text" class="form-control" id="p_des_input"
+                               placeholder="输入测试步骤（如1,2,3...）" value="{{ api_step.api_s_step }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_des_input">测试步骤内容：</label>
+                        <br><br>
+                        <input name="api_name" type="text" class="form-control" id="p_des_input"
+                               placeholder="输入测试步骤内容" value="{{ api_step.api_s_name }}">
+                        <p style="color: red">{{ msg_api_s_name }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">Url地址：</label>
+                        <br><br>
+                        <input name="api_url" type="text" class="form-control" id="p_er_input" placeholder="输入Url地址"
+                               value="{{ api_step.api_s_url }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">请求参数和值：</label>
+                        <br><br>
+                        <input name="api_param_value" type="text" class="form-control" id="p_er_input"
+                               placeholder="输入请求参数和值" value="{{ api_step.api_s_param_value }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">请求方法：</label>
+                        <br><br>
+                        <select class="form-control" name="method_check">
+                            <option value="get">get</option>
+                            <option value="post">post</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">预期结果：</label>
+                        <br><br>
+                        <input name="api_result" type="text" class="form-control" placeholder="输入预期结果"
+                               value="{{ api_step.api_s_result }}">
+                    </div>
+                    <div class="form-group">
+                        <label id='product_name_distance' for="p_er_input">测试结果：</label>
+                        <br><br>
+                        <select class="form-control" name="api_s_status">
+                            {% if api_step.api_s_status == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% elif api_step.api_s_status == 0 %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <button id="btnSubmit" type="button" class="btn">保存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        toastr.options = {
+            closeButton: true,
+            timeOut: "1000",
+            positionClass: "toast-center-center",
+        };
+
+        $(function () {
+            btnSubmit();
+        });
+
+        function btnSubmit() {
+            $("#btnSubmit").click(function () {
+                $.ajax({
+                    url: "{% url 'atp:api_step_update' api_t_id api_s_id  %}",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: $("#api_s_input").serialize(),
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success("修改成功");
+                            setTimeout(function () {
+                                location.href = "{% url 'atp:api_step_manage' api_t_id %}"
+                            }, 1000)
+                        } else if (res.code === 201) {
+                            toastr.success("修改失败");
+                            setTimeout(function () {
+                                location.href = "{% url 'atp:api_step_manage' api_t_id %}"
+                            }, 1000)
+                        } else if (res.code === 202) {
+                            $("#msg_api_s_name").text("测试步骤内容不能为空")
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}

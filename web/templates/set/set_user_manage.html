@@ -1,0 +1,89 @@
+{% extends 'manage/base_manage.html' %}
+{% load static %}
+{% block title %}用户管理列表{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/set/set_user_manage.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div id="test_content">
+            <div id="test_list">
+                <a id="title_distance" href={% url 'atp:set_manage' %}>公共设置</a>
+                <a id="title_distance" href={% url 'atp:set_user_manage' %}>用户管理</a>
+            </div>
+            <h3 id="add_test_name">用户管理列表</h3>
+            <form id="" method="post" action="">
+                {% csrf_token %}
+                <table class="table-striped" id="table_list">
+                    <thead>
+                    <tr id="tr_title">
+                        <th id="table_title_length">ID</th>
+                        <th id="table_title_length2">用户名称</th>
+                        <th id="table_title_length2">密码</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in atp_user %}
+                        <tr id="tr_d">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.password }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+            <!--分页-->
+            <div id="pager">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if at_user.has_previous %}
+                            <li>
+                                <a href="?page={{ at_user.previous_page_number }}&search_name={{ search_name }}"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for page_index in at_user.paginator.page_range %}
+                            {% ifequal page_index  at_user.number %}
+                                <li class="active">
+                                    <a style="background: cadetblue"
+                                       href="?page={{ page_index }}">{{ page_index }}</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="?page={{ page_index }}">{{ page_index }}</a>
+                                </li>
+                            {% endifequal %}
+                        {% endfor %}
+
+                        {% if at_user.has_next %}
+                            <li>
+                                <a href="?page={{ at_user.next_page_number }}&search_name={{ search_name }}"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/manage/base_manage.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/bootstrap-3.3.7/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/toastr-master/build/toastr.min.css' %}">
+    {% block css %}{% endblock %}
+
+</head>
+<body>
+<!-- 导航栏 -->
+<div class="top">
+    <a id="font_title" href="{% url 'atp:home' %}">Ldh自动化测试平台</a>
+    {% if request.atp.user %}
+        <p id="username">{{ request.atp.user.username }}</p>
+    {% endif %}
+    <a id="logout" href="{% url 'atp:logout' %}">退出</a>
+</div>
+<!-- 侧边栏 -->
+<div class="sidebar">
+    <ul class="nav">
+        <li><a class='glyphicon glyphicon-flag' id="sidebar_name" href="{% url 'atp:product_manage' %}"> 产品中心</a></li>
+        <li><a class="glyphicon glyphicon-comment" id="sidebar_name" href="{% url 'atp:apis_manage' %}"> 用例管理</a></li>
+        {#        <li><a class="glyphicon glyphicon-leaf" id="sidebar_name" href="#"> 定时任务&nbsp#}
+        {#            &nbsp&nbsp(Celery)</a></li>#}
+        {#账号admin 密码123456 #}
+        <li><a class="glyphicon glyphicon-fire" id="sidebar_name" href="{% url 'atp:jenkins_manage' %}"> 持续集成&nbsp
+            &nbsp&nbsp(Jenkins)</a></li>
+        <li><a class="glyphicon glyphicon-eye-open" id="sidebar_name" href="{% url 'atp:bug_manage' %}"> Bug管理</a></li>
+{#        <li><a class="glyphicon glyphicon-folder-open" id="sidebar_name" href="{% url 'atp:report_apis' %}"> 测试报告</a>#}
+        <li><a class="glyphicon glyphicon-folder-open" id="sidebar_name" href="{% url 'atp:report_apis' %}"> 测试报告</a>
+        </li>
+        <li><a class="glyphicon glyphicon-tasks" id="sidebar_name" href="{% url 'atp:locust_manage' %}"> 性能测试&nbsp
+            &nbsp&nbsp(Locust)</a></li>
+        <li><a class="glyphicon glyphicon-cog" id="sidebar_name" href="{% url 'atp:set_manage' %}"> 系统设置</a></li>
+        {#账号admin 密码123456 #}
+        <li><a class="glyphicon glyphicon-home" id="sidebar_name" href="../../admin" target="_blank"> 后台管理</a></li>
+    </ul>
+</div>
+{% block content %}{% endblock %}
+
+<script src="{% static 'js/jquery-3.4.1/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'plugin/layer/layer.js' %}"></script>
+<script src="{% static 'plugin/bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugin/toastr-master/build/toastr.min.js' %}"></script>
+{% block js %}{% endblock %}
+</body>
+</html>
